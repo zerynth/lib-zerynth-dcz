@@ -1,0 +1,116 @@
+# Zerynth Device Configuration Map
+#
+# this file declares a set of resources to be loaded on the device
+# in a way that is indipendent from the firmware in order to facilitate
+# mass programming and mass provisioning.
+#
+# It is in Yaml format, and the various sections/options are documented below
+
+
+# this field must be true to enable this configuration!
+# if not present or false, the configuration is skipped
+active: true
+
+############################
+# AWS Section
+#
+# in the "aws" section, the various credentials and options
+# for aws iot services are spcified
+aws:
+    # specify the access key id of the IAM user that can create certificate and things
+    aws_access_key_id: "your-access-key"
+    # the IAM user credentials
+    aws_secret_access_key: "your-secret-key"
+    # the region where certificates will be created
+    region_name: "your-region"
+    # specify the Amazon CA certificate to use [verisign, ecc_256, ecc_384, rsa_2048, rsa_4096]
+    endpoint_type: verisign
+    # activation of certificate upon creation
+    activate_cert: true
+    # the thing prefix for the thing name (optional: if not given, no thing is created)
+    thing_prefix: "MyThing"
+    # the thing policy to attach to the certificate (optional if not given no policy is attached to cert)
+    thing_policy: test_policy
+
+
+############################
+# Provisioning Section
+#
+# in the "provisioning" section, the various resources
+# with their location and their generation method are listed
+#
+# For each resource the following fields are mandatory:
+#
+# - name: an ascii string specifying the resource name (max 16 bytes)
+# - type: the type of the resource [file, prvkey, pubkey, cert]
+# - args: a list of arguments needed to load or generate the resource
+# - mapping: a list of addresses where the resource must be copied
+# 
+# When using DCZ (see next section), an optional parameter "format" can be given.
+# It must be an ascii string of at most 4 bytes, by default it is set to "bin"
+#
+# uncomment the following section to enable provisioning
+provisioning:
+    # the provisioning method (used to generate device credentials)
+    method: aws_iot_key_cert
+    # the list of resources
+    resources:
+        # the device CA certificate: obtained from the ones provided by Amazon
+        - name: cacert
+          type: cacert
+          mapping: [0x326000,0x327000]
+        # the device certificate: will be created by calling into AWS API
+        - name: clicert
+          type: clicert
+          mapping: [0x320000,0x321000]
+        # the device private key: will be created by calling into AWS API and will be encrypted
+        - name: prvkey
+          type: prvkey
+          mapping: [0x322000,0x323000]
+          encrypt: True
+        # the endpoint where to connect to. Obtained by calling into AWS API
+        - name: endpoint
+          type: endpoint
+          mapping: [0x324000,0x325000]
+          format: json
+        # some device info useful to have in the firmware (for this to work, aws.thing_prefix must be given!)
+        - name: devinfo
+          type: devinfo
+          mapping: [0x328000,0x329000]
+          format: json
+        # an encrypted resource where wifi credentials can be stored
+        - name: wificred
+          type: file
+          args: files/wificred.json
+          mapping: [0x330000, 0x331000]
+          format: json
+          encrypt: True
+
+
+############################
+# DCZ Section
+#
+# in the "dcz" section the provisioned resources (or a subset of them)
+# can be included in the Device Configuration Zone. The DCZ is a versionable index
+# of the available resources that can be easily accessed and updated 
+# with the dcz Zerynth module.
+#
+# DCZ supports up to 8 replication zones for safety. If a resource is included in a DCZ
+# with replication n, it must be placed in exactly n different locations for versioning
+#
+# uncomment the section below to enable dcz
+dcz:
+    # locations of the DCZs (replication 2)
+    mapping: [0x310000,0x311000]
+    # list of resource names to be included
+    resources:
+        - endpoint
+        - clicert
+        - prvkey
+        - cacert
+        - devinfo
+        - wificred
+
+
+
+

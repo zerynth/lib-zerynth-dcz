@@ -1,0 +1,20 @@
+{
+    "dependencies": {},
+    "description": "Zerynth DCZ support",
+    "fullname": "lib.zerynth.dcz",
+    "git_pointer": "zerynth://zerynth-libs/zerynth-dcz",
+    "info": {
+        "chip_manufacturer": "-",
+        "chip_name": "-",
+        "name": "Zerynth DCZ Library",
+        "type": "Utility"
+    },
+    "keywords": [
+        "DCZ",
+        "Config Zone"
+    ],
+    "repo": "official",
+    "title": "Zerynth DCZ Library",
+    "version": "r2.2.0",
+    "whatsnew": ""
+}
