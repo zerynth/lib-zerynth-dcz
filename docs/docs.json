@@ -1,9 +1,0 @@
-{
-	"version":"2.2.0",
-	"title":"Device Configuration Zone",
-	"copyright":"Zerynth Team",
-	"files":[
-		["DCZ","dcz.py"]
-	]
-}
-

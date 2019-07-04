@@ -1,0 +1,13 @@
+---
+description: Zerynth DCZ support
+fullname: lib.zerynth.dcz
+info:
+    chip_manufacturer: '-'
+    chip_name: '-'
+    name: Zerynth DCZ Library
+    type: Utility
+keywords:
+- DCZ
+- Config Zone
+title: Zerynth DCZ Library
+...
